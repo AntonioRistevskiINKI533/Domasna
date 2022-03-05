@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Domasna</string>
+    <string-array name="my_foods">
+        <item>Pizza</item>
+        <item>Jco</item>
+        <item>Starbucks</item>
+        <item>McDonald</item>
+        <item>KFC</item>
+    </string-array>
+</resources>

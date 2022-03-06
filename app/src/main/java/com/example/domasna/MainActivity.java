@@ -7,10 +7,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -22,14 +24,25 @@ public class MainActivity extends AppCompatActivity {
 
     ListView search_food;
     ArrayAdapter<String> adapter;
+    Boolean isEdit=false;
+    int index;
 
     public List<String> stringList = new ArrayList<String>();
     TextInputEditText textInputEditText;
 
     public void add(View view) {
+
         textInputEditText = findViewById(R.id.tagYourQueryInput);
-        stringList.add(textInputEditText.getText().toString().trim());
-        setContentView(R.layout.activity_main);
+
+        if(isEdit==false) {
+
+            stringList.add(textInputEditText.getText().toString().trim());
+        }
+        else {
+            stringList.set(index,textInputEditText.getText().toString().trim());
+            isEdit=false;
+        }
+
 
         search_food = (ListView) findViewById(R.id.search_food);
 
@@ -46,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void clear(View view) {
+
         stringList.clear();
-        setContentView(R.layout.activity_main);
 
         search_food = (ListView) findViewById(R.id.search_food);
 
@@ -95,6 +108,18 @@ public class MainActivity extends AppCompatActivity {
         );
 
         search_food.setAdapter(adapter);
+
+        search_food.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                System.out.println(stringList.get(position));
+                textInputEditText = findViewById(R.id.tagYourQueryInput);
+                textInputEditText.setText(stringList.get(position));
+
+                index=position;
+                isEdit=true;
+            }
+        });
     }
 
     @Override

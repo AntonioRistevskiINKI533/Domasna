@@ -30,17 +30,21 @@ public class MainActivity extends AppCompatActivity {
     public List<String> stringList = new ArrayList<String>();
     TextInputEditText textInputEditText;
 
+
     public void add(View view) {
 
         textInputEditText = findViewById(R.id.tagYourQueryInput);
 
         if(isEdit==false) {
-
             stringList.add(textInputEditText.getText().toString().trim());
+            textInputEditText.setText("");
         }
         else {
             stringList.set(index,textInputEditText.getText().toString().trim());
             isEdit=false;
+            Button saveButton = findViewById(R.id.saveButton);
+            saveButton.setText("SAVE");
+            textInputEditText.setText("");
         }
 
 
@@ -118,6 +122,8 @@ public class MainActivity extends AppCompatActivity {
 
                 index=position;
                 isEdit=true;
+                Button saveButton = findViewById(R.id.saveButton);
+                saveButton.setText("EDIT");
             }
         });
     }

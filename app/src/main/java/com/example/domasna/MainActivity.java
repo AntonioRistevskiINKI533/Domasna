@@ -21,7 +21,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
 
-    //Test
+    //Test2
     ListView search_food;
     ArrayAdapter<String> adapter;
 

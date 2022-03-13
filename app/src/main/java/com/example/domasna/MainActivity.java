@@ -30,6 +30,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    //version 2
     ListView search_food;
     ArrayAdapter<String> adapter;
     Boolean isEdit=false;

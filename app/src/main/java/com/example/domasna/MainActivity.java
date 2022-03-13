@@ -24,13 +24,19 @@ import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 public class MainActivity extends AppCompatActivity {
 
-    //version 2
     ListView search_food;
     ArrayAdapter<String> adapter;
     Boolean isEdit=false;
@@ -72,38 +78,51 @@ public class MainActivity extends AppCompatActivity {
         lv.setAdapter(adapter);
     }
 
-//    Button saveButton = (Button) findViewById(R.id.saveButton) ;
-//    saveButton.setOnClickListener(new View.OnClickListener() {
-//        @Override
-//        public void onClick(View v) {
-//            String phno="telephone";
-//
-//            Intent i=new Intent(Intent.ACTION_DIAL,Uri.parse(phno));
-//            startActivity(i);
-//        }
-//    });
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        File file = new File(MainActivity.this.getFilesDir(), "text");
+        if (!file.exists()) {
+            file.mkdir();
+        }
+        try {
+            File gpxfile = new File(file, "Dictionary.txt");
+            FileWriter writer = new FileWriter(gpxfile);
+            for(int i=0;i<stringList.size();i++){
+                writer.write(stringList.get(i)+System.lineSeparator());
+            }
+            writer.flush();
+            writer.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        stringList.add("Toyota");
-        stringList.add("Mercedes");
-
-//        search_food = (ListView) findViewById(R.id.search_food);
-        //list_item_name_btn
-
-//        ArrayList<String> arrayFood = new ArrayList<>();
-//        arrayFood.addAll(stringList);
-
-//        adapter = new ArrayAdapter<String>(
-//                MainActivity.this,
-//                android.R. layout.simple_list_item_1,
-//                arrayFood
-//        );
-//
-//        search_food.setAdapter(adapter);
+        String string = new String();
+        File file = new File(MainActivity.this.getFilesDir(), "text");
+        if (!file.exists()) {
+            file.mkdir();
+        }
+        try {
+            File gpxfile = new File(file, "Dictionary.txt");
+            FileReader reader = new FileReader(gpxfile);
+            reader.close();
+            BufferedReader in = new BufferedReader(new FileReader(gpxfile));
+            string = in.readLine();
+            while(string!=null){
+                stringList.add(string);
+                string = in.readLine();
+            }
+            in.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
 
         ListView lv = (ListView) findViewById(R.id.search_food);
         adapter = new MyListAdapter(this, R.layout.list_item, stringList);
@@ -145,25 +164,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
 
     }
-
-//    edittext = (EditText)findViewById(R.id.search_menu);
-//        edittext.addTextChangedListener(new TextWatcher() {
-//
-//        @Override
-//        public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-//            int textlength = cs.length();
-//            ArrayList<ContactStock> tempArrayList = new ArrayList<ContactStock>();
-//            for(ContactStock c: arraylist){
-//                if (textlength <= c.getName().length()) {
-//                    if (c.getName().toLowerCase().contains(cs.toString().toLowerCase())) {
-//                        tempArrayList.add(c);
-//                    }
-//                }
-//            }
-//            mAdapter = new ContactListAdapter(activity, tempArrayList);
-//            lv.setAdapter(mAdapter);
-//        }
-//    });
 
     private class MyListAdapter extends ArrayAdapter<String> {
         private int layout;
@@ -229,3 +229,39 @@ public class MainActivity extends AppCompatActivity {
         Button button;
     }
 }
+
+//    //        FileOutputStream fOut = openFileOutput("Dictionary.txt", MODE_PRIVATE);
+////        OutputStreamWriter osw = new OutputStreamWriter(fOut);
+//    File file = new File(MainActivity.this.getFilesDir(), "text");
+//        if (!file.exists()) {
+//                file.mkdir();
+//                }
+//                try {
+//                File gpxfile = new File(file, "sample");
+//                FileWriter writer = new FileWriter(gpxfile);
+//                //writer.append(enterText.getText().toString());
+//                //writer.flush();
+//                //writer.close();
+//                //Toast.makeText(MainActivity.this, "Saved your text", Toast.LENGTH_LONG).show();
+//                } catch (Exception e) { }
+
+
+
+//    Scanner scan = new Scanner(getResources ().openRawResource(R.raw.dictionary));
+//        //String allText=""; // read entire file String allText =
+//        while (scan.hasNextLine()) {
+//            String line = scan.nextLine();
+//            //allText += line;
+//            stringList.add(line);
+//        }
+//        scan.close();
+
+//        try{
+//                File yourFile = new File(this.getFilesDir(),"Dictionary.txt");
+//                yourFile.createNewFile(); // if file already exists will do nothing
+//                openFileInput("Dictionary.txt");
+//                System.out.println(getFilesDir()+"/Dictionary.txt"+"1");
+//                }
+//                catch (Exception e){
+//                System.out.println(e+"2");
+//                }

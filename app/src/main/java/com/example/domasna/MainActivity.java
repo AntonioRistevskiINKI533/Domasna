@@ -32,6 +32,7 @@ import java.io.FileWriter;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -43,56 +44,82 @@ public class MainActivity extends AppCompatActivity {
     int index;
 
     public List<String> stringList = new ArrayList<String>();
+    public List<String> stringList2 = new ArrayList<String>();
+    public List<String> joinedStringList = new ArrayList<String>();
+    //private HashMap<String,String> dictionary = new HashMap<String, String>();
     TextInputEditText textInputEditText;
+    TextInputEditText textInputEditText2;
 
 
     public void add(View view) {
 
         textInputEditText = findViewById(R.id.tagYourQueryInput);
+        textInputEditText2 = findViewById(R.id.tagYourQueryInput2);
 
         if(isEdit==false) {
             stringList.add(textInputEditText.getText().toString().trim());
+            stringList2.add(textInputEditText2.getText().toString().trim());
+            joinedStringList.add(textInputEditText.getText().toString().trim()+"-"+textInputEditText2.getText().toString().trim());
+            System.out.println("addlist:"+stringList);
+            System.out.println("addlist2:"+stringList2);
+            System.out.println("addlistjoined:"+joinedStringList);
+            //dictionary.put(textInputEditText.getText().toString().trim(),textInputEditText2.getText().toString().trim());
         }
         else {
             stringList.set(index,textInputEditText.getText().toString().trim());
+            stringList2.set(index,textInputEditText2.getText().toString().trim());
+            joinedStringList.set(index,textInputEditText.getText().toString().trim()+"-"+textInputEditText2.getText().toString().trim());
+            //dictionary.put(textInputEditText.getText().toString().trim(),textInputEditText2.getText().toString().trim());
             isEdit=false;
+            System.out.println("editlist:"+stringList);
+            System.out.println("editlist2:"+stringList2);
+            System.out.println("editlistjoined:"+joinedStringList);
             Button saveButton = findViewById(R.id.saveButton);
             saveButton.setText("SAVE");
         }
 
         textInputEditText.setText("");
+        textInputEditText2.setText("");
 
         ListView lv = (ListView) findViewById(R.id.search_food);
         //lv.setAdapter(new MyListAdapter(this, R.layout.list_item, stringList));
-        adapter = new MyListAdapter(this, R.layout.list_item, stringList);
+        adapter = new MyListAdapter(this, R.layout.list_item, joinedStringList);
         lv.setAdapter(adapter);
     }
 
     public void clear(View view) {
 
         stringList.clear();
+        stringList2.clear();
+        joinedStringList.clear();
+        //dictionary.clear();
 
         ListView lv = (ListView) findViewById(R.id.search_food);
-        //lv.setAdapter(new MyListAdapter(this, R.layout.list_item, stringList));
-        adapter = new MyListAdapter(this, R.layout.list_item, stringList);
+        //lv.setAdapter(new MyListAdapter(this, R.layout.list_item, joinedStringList));
+        adapter = new MyListAdapter(this, R.layout.list_item, joinedStringList);
         lv.setAdapter(adapter);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        System.out.println("1");
         File file = new File(MainActivity.this.getFilesDir(), "text");
         if (!file.exists()) {
             file.mkdir();
         }
         try {
             File gpxfile = new File(file, "Dictionary.txt");
+            System.out.println("2");
             FileWriter writer = new FileWriter(gpxfile);
-            for(int i=0;i<stringList.size();i++){
-                writer.write(stringList.get(i)+System.lineSeparator());
+            System.out.println("d1:"+joinedStringList);
+            System.out.println("d2:"+stringList);
+            System.out.println("d3:"+stringList2);
+            for(int i=0;i<joinedStringList.size();i++){
+                writer.write(stringList.get(i)+"    "+stringList2.get(i)+System.lineSeparator());
             }
             writer.flush();
+            System.out.println("3");
             writer.close();
         } catch (Exception e) {
             System.out.println(e);
@@ -103,35 +130,56 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        System.out.println("1");
         String string = new String();
         File file = new File(MainActivity.this.getFilesDir(), "text");
         if (!file.exists()) {
             file.mkdir();
+            System.out.println("2");
         }
         try {
             File gpxfile = new File(file, "Dictionary.txt");
             FileReader reader = new FileReader(gpxfile);
             reader.close();
+            System.out.println("3");
             BufferedReader in = new BufferedReader(new FileReader(gpxfile));
             string = in.readLine();
+            System.out.println("4");
+            int i=0;
             while(string!=null){
-                stringList.add(string);
+                String[] words = string.split("    ");
+                stringList.add(words[0]);
+                System.out.println("word0:"+words[0]);
+                stringList2.add(words[1]);
+                System.out.println("word1:"+words[1]);
+                joinedStringList.add(words[0]+"-"+words[1]);
+                System.out.println("wordjoinedlist:"+joinedStringList);
+                //dictionary.put(string,string);
+                //dictionary.put;
                 string = in.readLine();
+                i++;
             }
             in.close();
+            //System.out.println(dictionary.entrySet());
         } catch (Exception e) {
             System.out.println(e);
         }
 
+        //for(int i=0;i<stringList.size();i++){
+        //    joinedStringList.add(stringList.get(i)+"-"+stringList2.get(i));
+        //}
+
         ListView lv = (ListView) findViewById(R.id.search_food);
-        adapter = new MyListAdapter(this, R.layout.list_item, stringList);
+        adapter = new MyListAdapter(this, R.layout.list_item, joinedStringList);
         lv.setAdapter(adapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 textInputEditText = findViewById(R.id.tagYourQueryInput);
+                textInputEditText2 = findViewById(R.id.tagYourQueryInput2);
                 textInputEditText.setText(stringList.get(position));
+                textInputEditText2.setText(stringList2.get(position));
+                System.out.println("list2:"+stringList2);
 
                 index=position;
                 isEdit=true;
@@ -190,7 +238,10 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     textInputEditText = findViewById(R.id.tagYourQueryInput);
+                    textInputEditText2 = findViewById(R.id.tagYourQueryInput2);
                     textInputEditText.setText(stringList.get(position));
+                    textInputEditText2.setText(stringList2.get(position));
+                    System.out.println("list2:"+stringList2);
 
                     index=position;
                     isEdit=true;

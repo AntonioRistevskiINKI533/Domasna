@@ -85,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
         //lv.setAdapter(new MyListAdapter(this, R.layout.list_item, stringList));
         adapter = new MyListAdapter(this, R.layout.list_item, joinedStringList);
         lv.setAdapter(adapter);
+
+        writeToFile();
     }
 
     public void clear(View view) {
@@ -98,11 +100,11 @@ public class MainActivity extends AppCompatActivity {
         //lv.setAdapter(new MyListAdapter(this, R.layout.list_item, joinedStringList));
         adapter = new MyListAdapter(this, R.layout.list_item, joinedStringList);
         lv.setAdapter(adapter);
+
+        writeToFile();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void writeToFile(){
         System.out.println("1");
         File file = new File(MainActivity.this.getFilesDir(), "text");
         if (!file.exists()) {
@@ -125,6 +127,12 @@ public class MainActivity extends AppCompatActivity {
             System.out.println(e);
         }
     }
+
+//    @Override
+//    protected void onDestroy() {
+//        writeToFile();
+//        super.onDestroy();
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
